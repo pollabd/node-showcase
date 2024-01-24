@@ -1,0 +1,17 @@
+version: "1.0"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: test-api
+    container_name: api-con
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGODB_URI=mongodb+srv://PKDEV:PKDEV@notesapp.bdalqyc.mongodb.net/?retryWrites=true&w=majority
+    ports:
+      - "3000:1337"
+    volumes:
+      - ./data_volume:/app_data
