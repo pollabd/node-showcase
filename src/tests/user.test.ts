@@ -1,30 +1,34 @@
-import request from "supertest";
+import supertest from "supertest";
 import app from "../app";
+import { createUser } from "../service/user.service";
 
 require("dotenv").config();
 
-describe("GET /api/users", () => {
-  it("should return all users", async () => {
-    return request(app)
-      .get("/api/users")
-      .expect("Content-Type", "text/html; charset=utf-8")
-      .expect(200)
-      .then((res) => {
-        expect(res).toBe(Array);
+describe("users", () => {
+  describe("get all users route", () => {
+    describe("given the users does not exist", () => {
+      it("should return a 404", async () => {
+        await supertest(app).get("/api/users").expect(404);
       });
+    });
+
+    describe("given the users does exist", () => {
+      it("should return a 200 and the users", async () => {
+        // NOTE : Change email everytime.
+
+        const userPayload = {
+          email: Math.random().toString(),
+          password: "12345678",
+          passwordConfirmation: "12345678",
+          name: "jr",
+        };
+
+        const user = await createUser(userPayload);
+
+        const { body, statusCode } = await supertest(app).get("/api/users");
+
+        expect(statusCode).toBe(200);
+      });
+    });
   });
 });
-
-// test("POST /api/users creates a new user", async () => {
-//   const newUser = {
-//     email: "hfghgf@j.com",
-//     password: "12345678",
-//     passwordConfirmation: "12345678",
-//     name: "jj",
-//   };
-
-//   const response = await request(app).post("/api/users").send(newUser);
-
-//   expect(response.status).toBe(201);
-//   expect(response.body).toEqual(newUser);
-// });

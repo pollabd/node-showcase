@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export interface UserInput {
   email: string;
@@ -29,7 +32,7 @@ userSchema.pre("save", async function (next) {
     return next();
   }
 
-  const salt = await bcrypt.genSalt(process.env.saltWorkFactor as any);
+  const salt = await bcrypt.genSalt(Number(process.env.saltWorkFactor));
   const hash = await bcrypt.hashSync(user.password, salt);
 
   user.password = hash;
